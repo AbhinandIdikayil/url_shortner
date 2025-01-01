@@ -1,0 +1,40 @@
+import { CONFIG } from "../constants/env"
+import { AuthAndUrlIService } from "../interfaces/IService"
+import { OAuth2Client } from 'google-auth-library'
+import ErrorResponse from "../utils/ErrorResponse"
+import { generateToken } from "../utils/genereteToken"
+import { AuthAndUrlRepo } from "../repository/authAndUrlRepo"
+
+const client = new OAuth2Client(CONFIG.CLIENT_ID, CONFIG.CLIENT_SECRET, CONFIG.REDIRECT_URI)
+
+export class AuthAndUrlService implements AuthAndUrlIService {
+    private repository: AuthAndUrlRepo
+    constructor(repository: AuthAndUrlRepo) {
+        this.repository = repository
+    }
+    async signin(id_token: string): Promise<{ email: string, token: string, name: string }> {
+        const ticket = await client.verifyIdToken({
+            idToken: id_token,
+            audience: CONFIG.CLIENT_ID,
+        });
+        const payload = ticket.getPayload()
+        console.log(payload)
+        if (!payload) {
+            throw ErrorResponse.badRequest('Invaild token')
+        }
+        const { sub: googleId, email, name } = payload;
+        if (!email || !name) {
+            throw ErrorResponse.badRequest('Invaild token')
+
+        }
+        let user = await this.repository.findByGoogleId(googleId)
+        let token
+        if (!user) {
+            user = (await this.repository.create({ name, email, googleId }))
+            token = generateToken(user._id)
+        }
+        token = generateToken(user?._id);
+
+        return { email: user.email, name: user.name, token }
+    }
+}
