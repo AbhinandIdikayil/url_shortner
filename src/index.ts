@@ -6,7 +6,7 @@ import { authAndUrlRoute } from './routes/authAndUrlRoute'
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import swaggerOptions from './config/swagger.config';
-
+import { analyticsRouter } from './routes/analyticsRoute'
 const app = express()
 
 
@@ -16,6 +16,8 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api', authAndUrlRoute)
+app.use('/api-joel', analyticsRouter)
+
 
 app.use(errorHandler)
 

@@ -19,3 +19,4 @@ export interface CreateUrl {
     alias?: string,
     topic?: string,
 }
+

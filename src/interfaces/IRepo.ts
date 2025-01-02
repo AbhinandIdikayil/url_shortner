@@ -1,3 +1,4 @@
+import { IAnalytic, IAnalyticsDoc } from "../model/AnalyticsModel";
 import { ShortUrlDoc } from "../model/ShortUrlModel";
 import { User } from "../model/UserModel";
 import { CreateUrlRepo, IRegister } from "./User";
@@ -12,5 +13,5 @@ export interface AuthAndUrlIRepo {
 }
 
 export interface IAnalyticsRepo {
-
+    create(data:IAnalytic): Promise<IAnalyticsDoc>
 }

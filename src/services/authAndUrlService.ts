@@ -7,6 +7,7 @@ import { AuthAndUrlRepo } from "../repository/authAndUrlRepo"
 import { CreateUrl } from "../interfaces/User"
 import { generateAlias } from "../utils/generateAlias"
 import { ShortUrlTopicENUM } from "../constants/enum/topic"
+import { ShortUrlDoc } from "../model/ShortUrlModel"
 
 const client = new OAuth2Client(CONFIG.CLIENT_ID, CONFIG.CLIENT_SECRET, CONFIG.REDIRECT_URI)
 
@@ -61,13 +62,13 @@ export class AuthAndUrlService implements AuthAndUrlIService {
         }
     }
 
-    async redirectShortUrl(alias: string): Promise<{ longUrl: string }> {
+    async redirectShortUrl(alias: string): Promise<ShortUrlDoc> {
         const url = await this.repository.findByAlias(alias);
         if (!url) {
             throw ErrorResponse.badRequest('ShortUrl not found');
         }
         url.totalClicks += 1
         await url.save();
-        return { longUrl: url.longUrl }
+        return url
     }
 }

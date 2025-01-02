@@ -4,6 +4,8 @@ import ErrorResponse from "../utils/ErrorResponse";
 import { success } from "../middlewares/success";
 import { status_code } from "../constants/enum/status_code";
 import { AuthenticatedRequest } from "../interfaces/Request";
+import { analyticsEvent } from "../events";
+import { Event_ENUM } from "../constants/event";
 
 
 export class AuthAndUrlController {
@@ -69,6 +71,25 @@ export class AuthAndUrlController {
                 throw ErrorResponse.badRequest('params-> alias is required')
             }
             const data = await this.service.redirectShortUrl(alias)
+            /**
+             * @pass_these_datas_as_params_to_event_emitter
+             * userAgent: string,
+             * ipAddress: string,
+             * shortUrl_id: Types.ObjectId,
+             * timestamp: Date
+             * userId
+             */
+            const params = {
+                shortUrl_id: data._id,
+                userAgent: req.headers['user-agent'],
+                ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+                timestamp: new Date(),
+                userId:data.userId
+            }
+
+            analyticsEvent.emit(Event_ENUM.CLICK_URL,params);
+
+            
             return res.redirect(data.longUrl)
         } catch (error) {
             next(error)
