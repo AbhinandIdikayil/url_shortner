@@ -1,6 +1,6 @@
 
 export enum DB_enum {
     USER_MODEL = 'Users',
-    URL = 'Urls',
+    SHORT_URL = 'Short_urls',
     ANALYTICS = 'Analytics'
 }

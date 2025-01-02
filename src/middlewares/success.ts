@@ -9,7 +9,7 @@ export const success = (
     }: {
         message: string,
         data: any,
-        status: number
+        status?: number
     }
 ) => {
     return res.status(status).json({

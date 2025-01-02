@@ -6,5 +6,6 @@ export const CONFIG = {
     CLIENT_ID: process.env.CLIENT_ID as string,
     CLIENT_SECRET: process.env.CLIENT_SECRET as string,
     REDIRECT_URI: process.env.REDIRECT_URI as string,
-    JWT_SECRET: process.env.JWT_SECRET as string
+    JWT_SECRET: process.env.JWT_SECRET as string,
+    URL: process.env.URL
 }

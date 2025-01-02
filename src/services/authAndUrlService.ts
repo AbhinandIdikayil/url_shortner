@@ -4,6 +4,9 @@ import { OAuth2Client } from 'google-auth-library'
 import ErrorResponse from "../utils/ErrorResponse"
 import { generateToken } from "../utils/genereteToken"
 import { AuthAndUrlRepo } from "../repository/authAndUrlRepo"
+import { CreateUrl } from "../interfaces/User"
+import { generateAlias } from "../utils/generateAlias"
+import { ShortUrlTopicENUM } from "../constants/enum/topic"
 
 const client = new OAuth2Client(CONFIG.CLIENT_ID, CONFIG.CLIENT_SECRET, CONFIG.REDIRECT_URI)
 
@@ -36,5 +39,25 @@ export class AuthAndUrlService implements AuthAndUrlIService {
         token = generateToken(user?._id);
 
         return { email: user.email, name: user.name, token }
+    }
+
+
+    async createShortUrl(data: CreateUrl): Promise<{ shortUrl: string; createdAt: string }> {
+        let { longUrl, userId, alias, topic } = data
+        if (!alias) {
+            alias = generateAlias()
+        }
+        if (!topic) {
+            topic = ShortUrlTopicENUM.OTHER
+        }
+        const existing = await this.repository.findByAlias(alias);
+        if (existing) {
+            throw ErrorResponse.badRequest('Alias already exist')
+        }
+        const createdUrl = await this.repository.createShortUrl({ longUrl, alias, topic, userId })
+        return {
+            shortUrl: `${CONFIG.URL}/api/shorten/${createdUrl.alias}`,
+            createdAt: createdUrl.createdAt
+        }
     }
 }

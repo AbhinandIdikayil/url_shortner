@@ -3,6 +3,7 @@ import { AuthAndUrlService } from "../services/authAndUrlService";
 import ErrorResponse from "../utils/ErrorResponse";
 import { success } from "../middlewares/success";
 import { status_code } from "../constants/enum/status_code";
+import { AuthenticatedRequest } from "../interfaces/Request";
 
 
 export class AuthAndUrlController {
@@ -26,6 +27,7 @@ export class AuthAndUrlController {
             res.setHeader('Authorization', `Bearer ${data.token}`);
             return success(res, { message: 'Sucessfull', data, status: status_code.CREATED })
         } catch (error) {
+            console.log(error)
             next(error)
         }
     }
@@ -35,7 +37,7 @@ export class AuthAndUrlController {
             const authHeader = req.headers.authorization;
             if (!authHeader || !authHeader.startsWith('Bearer ')) {
                 return res.status(400).json({ message: 'Token is required' });
-            } 
+            }
             res.setHeader('Authorization', `Bearer`);
             return success(res, { message: 'Sucessfull', data: '', status: status_code.OK, })
         } catch (error) {
@@ -43,4 +45,20 @@ export class AuthAndUrlController {
         }
     }
 
-}
+
+    async createShortUrlController(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+        try {
+            const { longUrl, customAlias: alias, topic } = req.body
+            if (!longUrl) throw ErrorResponse.badRequest('longUrl is required')
+            if (!req.user?.id) {
+                throw ErrorResponse.badRequest('Not authorized')
+            }
+            const data = await this.service.createShortUrl({ longUrl, userId: req.user?.id, alias, topic });
+            return success(res,{message:'ShortUrl created successfully',data})
+        } catch (error) {
+            console.log(error)
+            next(error)
+        }
+    }
+
+} 

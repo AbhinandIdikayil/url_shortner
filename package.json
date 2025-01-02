@@ -2,11 +2,11 @@
   "name": "url_shortner",
   "version": "1.0.0",
   "description": "",
-  "main": "build/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node src/index.ts",
-    "start": "nodemon build/index.js"
+    "dev": "nodemon src/index.ts",
+    "start": "npm run build&&node  build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "google-auth-library": "^9.15.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2",
+    "rand-token": "^1.0.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
