@@ -11,3 +11,6 @@ export interface AuthAndUrlIRepo {
     findByAlias(alias: string): Promise<ShortUrlDoc | null>
 }
 
+export interface IAnalyticsRepo {
+
+}

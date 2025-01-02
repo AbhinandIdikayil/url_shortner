@@ -7,3 +7,8 @@ export interface AuthAndUrlIService {
     createShortUrl(data:CreateUrl): Promise<{shortUrl: string, createdAt: string}>
     redirectShortUrl(alias: string): Promise<{longUrl: string}>
 }
+
+
+export interface IAnalyticsService {
+    
+}

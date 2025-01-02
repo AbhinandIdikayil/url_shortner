@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types } from "mongoose"
+import mongoose, { Document, Schema, Types } from "mongoose"
 import { ShortUrlTopicENUM } from "../constants/enum/topic"
 import { DB_enum } from "../constants/db"
 
@@ -7,7 +7,8 @@ export interface ShortUrlDoc extends Document {
     alias: string,
     userId: Types.ObjectId,
     topic: ShortUrlTopicENUM,
-    createdAt: string
+    createdAt: string,
+    totalClicks: number
 }
 
 const ShortUrlSchema = new Schema<ShortUrlDoc>({
@@ -28,6 +29,10 @@ const ShortUrlSchema = new Schema<ShortUrlDoc>({
     topic: {
         type: String,
         enum: Object.values(ShortUrlTopicENUM)
+    },
+    totalClicks: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true });
 

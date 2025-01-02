@@ -3,6 +3,7 @@ import { AuthAndUrlService } from '../services/authAndUrlService'
 import { AuthAndUrlRepo } from '../repository/authAndUrlRepo'
 import { AuthAndUrlController } from '../controllers/AuthAndUrlContoller'
 import { auth } from '../middlewares/auth'
+import { shortUrlRateLimiter } from '../config/rate.limiter'
 
 export const authAndUrlRoute = Router()
 
@@ -124,7 +125,7 @@ authAndUrlRoute.route('/logout').post(authAndUrlController.logout.bind(authAndUr
     *                   example: CREATED
     */
 authAndUrlRoute.route('/shorten')
-    .post(auth, authAndUrlController.createShortUrlController.bind(authAndUrlController))
+    .post(shortUrlRateLimiter, auth, authAndUrlController.createShortUrlController.bind(authAndUrlController))
 
 
 /**

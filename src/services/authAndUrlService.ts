@@ -66,6 +66,8 @@ export class AuthAndUrlService implements AuthAndUrlIService {
         if (!url) {
             throw ErrorResponse.badRequest('ShortUrl not found');
         }
+        url.totalClicks += 1
+        await url.save();
         return { longUrl: url.longUrl }
     }
 }
