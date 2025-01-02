@@ -60,4 +60,12 @@ export class AuthAndUrlService implements AuthAndUrlIService {
             createdAt: createdUrl.createdAt
         }
     }
+
+    async redirectShortUrl(alias: string): Promise<{ longUrl: string }> {
+        const url = await this.repository.findByAlias(alias);
+        if (!url) {
+            throw ErrorResponse.badRequest('ShortUrl not found');
+        }
+        return { longUrl: url.longUrl }
+    }
 }

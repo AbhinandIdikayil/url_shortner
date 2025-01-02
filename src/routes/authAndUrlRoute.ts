@@ -156,4 +156,4 @@ authAndUrlRoute.route('/shorten')
 
 */
 
-authAndUrlRoute.route('/shorten/:alias').post(auth, authAndUrlController.logout.bind(authAndUrlController))
+authAndUrlRoute.route('/shorten/:alias').get(authAndUrlController.redirectShortUrlController.bind(authAndUrlController))

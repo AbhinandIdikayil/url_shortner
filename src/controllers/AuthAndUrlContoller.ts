@@ -54,9 +54,23 @@ export class AuthAndUrlController {
                 throw ErrorResponse.badRequest('Not authorized')
             }
             const data = await this.service.createShortUrl({ longUrl, userId: req.user?.id, alias, topic });
-            return success(res,{message:'ShortUrl created successfully',data})
+            return success(res, { message: 'ShortUrl created successfully', data })
         } catch (error) {
             console.log(error)
+            next(error)
+        }
+    }
+
+
+    async redirectShortUrlController(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { alias } = req.params
+            if (!alias) {
+                throw ErrorResponse.badRequest('params-> alias is required')
+            }
+            const data = await this.service.redirectShortUrl(alias)
+            return res.redirect(data.longUrl)
+        } catch (error) {
             next(error)
         }
     }
