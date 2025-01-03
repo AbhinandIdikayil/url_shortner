@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import { CONFIG } from './constants/env'
 import { connectDB } from './config/connection'
 import { errorHandler } from './middlewares/ErrorMiddleware'
@@ -16,7 +16,20 @@ const startServer = () => {
     const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-    app.use('/api', allRoute)
+    app.use('/api', allRoute);
+
+    app.get("/", (req: Request, res: Response) => {
+
+        const responsePayload = {
+            message: `Url shortner!`,
+            links: {
+                logout: `${CONFIG.URL}/logout`,
+                login: `${CONFIG.URL}$/login/google`
+            },
+        }
+
+        res.status(200).json(responsePayload);
+    });
 
     app.use(errorHandler);
 
