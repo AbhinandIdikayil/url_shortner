@@ -11,7 +11,6 @@ const app = express()
 
 
 const startServer = () => {
-
     app.use(express.json())
     const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
