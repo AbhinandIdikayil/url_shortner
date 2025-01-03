@@ -14,9 +14,11 @@ export interface AuthAndUrlIRepo {
 
 export interface IAnalyticsRepo {
     create(data: IAnalytic): Promise<IAnalyticsDoc>
-    uniqueClicks(shortUrl_id: string): Promise<number>
+    uniqueClicks(shortUrl_Id: string | string[]): Promise<number>
     findShortUrl(alias: string): Promise<ShortUrlDoc | null>
-    clicksByDate(shortUrl_Id: string): Promise<{date: string, clicks:number}[]>
-    osType(shortUrl_Id: string): Promise<any[]>
-    deviceType(shortUrl_Id: string): Promise<any[]>
+    clicksByDate(shortUrl_Id?: string | string[], last_day?:number): Promise<{date: string, clicks:number}[]>
+    osType(shortUrl_Id?: string): Promise<any[]>
+    deviceType(shortUrl_Id?: string): Promise<any[]>
+    findShortUrlByTopic(topic: string): Promise<ShortUrlDoc[] | []>
+    totalClicksBasedOnTopic(topic: string): Promise<any[] | null>
 }

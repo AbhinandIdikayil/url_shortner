@@ -3,6 +3,7 @@ import { IAnalytics, IAnalyticsDoc } from "../model/AnalyticsModel";
 import { AnalyticsRepo } from "../repository/analyticsRepo";
 import { UAParser } from 'ua-parser-js'
 import ErrorResponse from "../utils/ErrorResponse";
+import { url } from "inspector";
 
 
 export class AnalyticsService implements IAnalyticsService {
@@ -37,7 +38,7 @@ export class AnalyticsService implements IAnalyticsService {
         const osType = await this.repository.osType(id)
         const deviceType = await this.repository.deviceType(id)
         return {
-            totalClicks, 
+            totalClicks,
             uniqueUsers,
             clicksByDate,
             osType,
@@ -45,4 +46,36 @@ export class AnalyticsService implements IAnalyticsService {
         }
     }
 
+
+
+
+
+    async analyticsBasedOnTopic(topic: string): Promise<any> {
+        const urlWithClickCount = await this.repository.findShortUrlByTopic(topic);
+        const totalClicks = await this.repository.totalClicksBasedOnTopic(topic);
+        const shortUrl_id: string[] = urlWithClickCount.map(url => url._id as string)
+
+        const uniqueUsers = await this.repository.uniqueClicks(shortUrl_id)
+        const clicksByDate = await this.repository.clicksByDate(shortUrl_id)
+        const urls = await this.addUniqueUsersToUrls(urlWithClickCount)
+        return {
+            totalClicks:totalClicks?.[0]?.totalClicks,
+            uniqueUsers,
+            clicksByDate,
+            urls
+        }
+    }
+
+    async addUniqueUsersToUrls(url: any[]): Promise<any[]> {
+        const urls = Promise.all(
+            url?.map(async (obj) => {
+                const uniqueUsers = await this.repository.uniqueClicks(obj._id as string)
+                return {
+                    ...obj._doc,
+                    uniqueUsers
+                };
+            })
+        )
+        return urls;
+    }
 }

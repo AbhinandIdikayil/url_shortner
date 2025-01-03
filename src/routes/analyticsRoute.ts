@@ -97,6 +97,7 @@ analyticsRouter.route('/:alias')
 
 
 analyticsRouter.route('/topic/:topic')
+    .get(analyticsController.topicBasedAnalyticsController.bind(analyticsController));
 
 analyticsRouter.route('/overall')
 

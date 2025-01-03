@@ -12,9 +12,20 @@ export class AnalyticsController {
     async aliasBasedAnalyticsController(req: Request, res: Response, next: NextFunction) {
         try {
             const { alias } = req.params
-            if(!alias) throw ErrorResponse.badRequest('alias is not provided');
+            if (!alias) throw ErrorResponse.badRequest('alias is missing in params');
             const data = await this.service.analyticsBasedOnAlias(alias)
-            return success(res,{message:'Successfull',data})
+            return success(res, { message: 'Successfull', data })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async topicBasedAnalyticsController(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { topic } = req.params
+            if (!topic) throw ErrorResponse.badRequest('topic is missing in params')
+            const data = await this.service.analyticsBasedOnTopic(topic);
+            return success(res, { data, message: 'Succesfull' })
         } catch (error) {
             next(error)
         }
