@@ -61,4 +61,8 @@ const AnalyticsSchema = new mongoose.Schema<IAnalyticsDoc>({
     }
 }, { timestamps: true });
 
+AnalyticsSchema.index({ shortUrl_Id: 1 });
+AnalyticsSchema.index({ userId: 1 });
+AnalyticsSchema.index({ shortUrl_Id: 1, userId: 1 });
+
 export const AnalyticsModel = mongoose.model<IAnalyticsDoc>(DB_enum.ANALYTICS, AnalyticsSchema);

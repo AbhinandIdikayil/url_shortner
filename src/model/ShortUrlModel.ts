@@ -36,4 +36,6 @@ const ShortUrlSchema = new Schema<ShortUrlDoc>({
     }
 }, { timestamps: true });
 
+
+
 export const ShortUrlModel = mongoose.model<ShortUrlDoc>(DB_enum.SHORT_URL, ShortUrlSchema);

@@ -3,6 +3,8 @@ import { IAnalytics, IAnalyticsDoc } from "../model/AnalyticsModel";
 import { AnalyticsRepo } from "../repository/analyticsRepo";
 import { UAParser } from 'ua-parser-js'
 import ErrorResponse from "../utils/ErrorResponse";
+import { getGeolocation } from "../utils/geoLocation";
+
 
 
 export class AnalyticsService implements IAnalyticsService {
@@ -11,11 +13,12 @@ export class AnalyticsService implements IAnalyticsService {
         this.repository = repo
     }
     async createAnalytics(data: IAnalytics): Promise<IAnalyticsDoc> {
-        console.log(data);
         const userAgent = new UAParser(data.userAgent);
         const os = userAgent.getOS().name || 'Unknown' as string
         const device = userAgent.getDevice().type || 'desktop' as string
-        console.log(this.repository)
+        const geoLocation = getGeolocation(data.ipAddress)
+        console.log(geoLocation);
+
         const analytics = this.repository.create({
             userAgent: data.userAgent,
             os,
@@ -77,7 +80,7 @@ export class AnalyticsService implements IAnalyticsService {
                 totalClicks: totalClicks?.[0]?.totalClicks,
                 uniqueUsers,
                 clicksByDate,
-                osType, 
+                osType,
                 deviceType
             }
         } catch (error) {
