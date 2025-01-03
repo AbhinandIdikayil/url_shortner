@@ -12,4 +12,5 @@ export interface AuthAndUrlIService {
 
 export interface IAnalyticsService {
     createAnalytics(data: IAnalytics): Promise<IAnalyticsDoc>
+    analyticsBasedOnAlias(alias: string): Promise<any>
 }

@@ -13,5 +13,10 @@ export interface AuthAndUrlIRepo {
 }
 
 export interface IAnalyticsRepo {
-    create(data:IAnalytic): Promise<IAnalyticsDoc>
+    create(data: IAnalytic): Promise<IAnalyticsDoc>
+    uniqueClicks(shortUrl_id: string): Promise<number>
+    findShortUrl(alias: string): Promise<ShortUrlDoc | null>
+    clicksByDate(shortUrl_Id: string): Promise<{date: string, clicks:number}[]>
+    osType(shortUrl_Id: string): Promise<any[]>
+    deviceType(shortUrl_Id: string): Promise<any[]>
 }

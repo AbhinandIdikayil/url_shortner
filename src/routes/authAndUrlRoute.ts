@@ -126,7 +126,7 @@ authAndUrlRoute.route('/logout').post(authAndUrlController.logout.bind(authAndUr
     */
 authAndUrlRoute.route('/shorten')
     .post(shortUrlRateLimiter, auth, authAndUrlController.createShortUrlController.bind(authAndUrlController))
-
+    
 
 /**
 * @swagger
@@ -154,7 +154,6 @@ authAndUrlRoute.route('/shorten')
 *             description: The original long URL to which the user is redirected.
 *             schema:
 *               type: string
-
 */
 
 authAndUrlRoute.route('/shorten/:alias').get(authAndUrlController.redirectShortUrlController.bind(authAndUrlController))
