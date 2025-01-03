@@ -8,16 +8,14 @@ export class AnalyticsRepo implements IAnalyticsRepo {
         return await AnalyticsModel.create(data)
     }
     async uniqueClicks(shortUrl_Id: string | string[]): Promise<number> {
-        // Determine the query based on the type of shortUrl_Id
         const query = Array.isArray(shortUrl_Id)
             ? { shortUrl_Id: [...shortUrl_Id] }
             : { shortUrl_Id };
-        console.log(query)
+            
         const data = await AnalyticsModel.distinct('ipAddress', query).then((users) => {
             console.log(users)
             return users.length
         })
-        console.log(data)
         return data
     }
 

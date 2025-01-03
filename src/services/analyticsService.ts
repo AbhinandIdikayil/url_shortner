@@ -4,6 +4,7 @@ import { AnalyticsRepo } from "../repository/analyticsRepo";
 import { UAParser } from 'ua-parser-js'
 import ErrorResponse from "../utils/ErrorResponse";
 import { getGeolocation } from "../utils/geoLocation";
+import { CONFIG } from "../constants/env";
 
 
 
@@ -66,25 +67,21 @@ export class AnalyticsService implements IAnalyticsService {
     }
 
     async overAllAnalytics(userId: string): Promise<any> {
-        try {
-            const totalClicks = await this.repository.totalClicksBasedOnTopicOrUser(undefined, userId);
-            const totalUrl = await this.repository.findUrlsCreatedByUser(userId);
-            const totalUrlLength = totalUrl.length
-            const shortUrl_ids = totalUrl.map(url => url._id as string)
-            const uniqueUsers = await this.repository.uniqueClicks(shortUrl_ids);
-            const clicksByDate = await this.repository.clicksByDateOfUserUrls(userId);
-            const osType = await this.repository.osType();
-            const deviceType = await this.repository.deviceType()
-            return {
-                totalUrls: totalUrlLength,
-                totalClicks: totalClicks?.[0]?.totalClicks,
-                uniqueUsers,
-                clicksByDate,
-                osType,
-                deviceType
-            }
-        } catch (error) {
-            console.log(error)
+        const totalClicks = await this.repository.totalClicksBasedOnTopicOrUser(undefined, userId);
+        const totalUrl = await this.repository.findUrlsCreatedByUser(userId);
+        const totalUrlLength = totalUrl.length
+        const shortUrl_ids = totalUrl.map(url => url._id as string)
+        const uniqueUsers = await this.repository.uniqueClicks(shortUrl_ids);
+        const clicksByDate = await this.repository.clicksByDateOfUserUrls(userId);
+        const osType = await this.repository.osType();
+        const deviceType = await this.repository.deviceType()
+        return {
+            totalUrls: totalUrlLength,
+            totalClicks: totalClicks?.[0]?.totalClicks,
+            uniqueUsers,
+            clicksByDate,
+            osType,
+            deviceType
         }
     }
 
@@ -94,7 +91,9 @@ export class AnalyticsService implements IAnalyticsService {
                 const uniqueUsers = await this.repository.uniqueClicks(obj._id as string)
                 return {
                     ...obj._doc,
-                    uniqueUsers
+                    uniqueUsers,
+                    url: `${CONFIG.URL}/api/shorten/${obj.alias}`,
+                    alias: undefined,
                 };
             })
         )
