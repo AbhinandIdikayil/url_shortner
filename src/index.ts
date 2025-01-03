@@ -18,7 +18,7 @@ const startServer = () => {
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     app.use('/api', allRoute)
 
-    app.use(errorHandler)
+    app.use(errorHandler);
 
     const server = app.listen(CONFIG.PORT, async () => {
         await connectDB();
