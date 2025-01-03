@@ -8,6 +8,7 @@ import { CreateUrl } from "../interfaces/User"
 import { generateAlias } from "../utils/generateAlias"
 import { ShortUrlTopicENUM } from "../constants/enum/topic"
 import { ShortUrlDoc } from "../model/ShortUrlModel"
+import { redisClient } from "../config/redis"
 
 const client = new OAuth2Client(CONFIG.CLIENT_ID, CONFIG.CLIENT_SECRET, CONFIG.REDIRECT_URI)
 
@@ -63,7 +64,18 @@ export class AuthAndUrlService implements AuthAndUrlIService {
     }
 
     async redirectShortUrl(alias: string): Promise<ShortUrlDoc> {
+        const cachedUrl = await redisClient.get(alias);
+        if (cachedUrl) {
+            console.log('getting data from cache');
+            return JSON.parse(cachedUrl) as ShortUrlDoc;
+        }
+
         const url = await this.repository.findByAlias(alias);
+
+        await redisClient.set(alias, JSON.stringify(url), {
+            EX: 3600,
+        });
+
         if (!url) {
             throw ErrorResponse.badRequest('ShortUrl not found');
         }
