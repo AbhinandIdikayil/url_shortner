@@ -14,4 +14,5 @@ export interface IAnalyticsService {
     createAnalytics(data: IAnalytics): Promise<IAnalyticsDoc>
     analyticsBasedOnAlias(alias: string): Promise<any>
     analyticsBasedOnTopic(topic: string): Promise<any>
+    overAllAnalytics(userId: string): Promise<any>
 }

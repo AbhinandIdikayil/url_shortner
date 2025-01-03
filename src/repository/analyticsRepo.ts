@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { IAnalyticsRepo } from "../interfaces/IRepo";
 import { AnalyticsModel, IAnalytic, IAnalyticsDoc } from "../model/AnalyticsModel";
 import { ShortUrlDoc, ShortUrlModel } from "../model/ShortUrlModel";
@@ -9,10 +10,15 @@ export class AnalyticsRepo implements IAnalyticsRepo {
     async uniqueClicks(shortUrl_Id: string | string[]): Promise<number> {
         // Determine the query based on the type of shortUrl_Id
         const query = Array.isArray(shortUrl_Id)
-            ? { shortUrl_Id: { $in: shortUrl_Id } }
+            ? { shortUrl_Id: [...shortUrl_Id] }
             : { shortUrl_Id };
-
-        return await AnalyticsModel.distinct('ipAddress', query).then((users) => users.length)
+        console.log(query)
+        const data = await AnalyticsModel.distinct('ipAddress', query).then((users) => {
+            console.log(users)
+            return users.length
+        })
+        console.log(data)
+        return data
     }
 
     /**
@@ -57,24 +63,25 @@ export class AnalyticsRepo implements IAnalyticsRepo {
         ])
     }
 
-    async osType(shortUrl_Id?: string): Promise<any[]> {
+    async osType(shortUrl_Id?: string, userId?: string): Promise<any[]> {
         return await AnalyticsModel.aggregate([
             {
                 $match: {
-                    ...(shortUrl_Id ? { shortUrl_Id } : {})
+                    ...(shortUrl_Id ? { shortUrl_Id } : {}),
+                    ...(userId ? { userId } : {})
                 }
             },
             {
                 $group: {
                     _id: '$os',
-                    uniqueClicks: { $sum: 1 },
+                    uniqueClicks: { $addToSet: { $concat: ['$ipAddress', '_', { $toString: '$shortUrl_Id' }] } },
                     uniqueUsers: { $addToSet: '$ipAddress' }
                 }
             },
             {
                 $project: {
                     osName: '$_id',
-                    uniqueClicks: 1,
+                    uniqueClicks: { $size: '$uniqueClicks' },
                     uniqueUsers: { $size: '$uniqueUsers' },
                     _id: 0
                 }
@@ -82,24 +89,26 @@ export class AnalyticsRepo implements IAnalyticsRepo {
         ])
     }
 
-    async deviceType(shortUrl_Id?: string): Promise<any[]> {
+    async deviceType(shortUrl_Id?: string, userId?: string): Promise<any[]> {
         return await AnalyticsModel.aggregate([
             {
                 $match: {
-                    ...(shortUrl_Id ? { shortUrl_Id } : {})
+                    ...(shortUrl_Id ? { shortUrl_Id } : {}),
+                    ...(userId ? { userId } : {}),
+
                 }
             },
             {
                 $group: {
                     _id: '$device',
-                    uniqueClicks: { $sum: 1 },
+                    uniqueClicks: { $addToSet: { $concat: ['$ipAddress', '_', { $toString: '$shortUrl_Id' }] } },
                     uniqueUsers: { $addToSet: '$ipAddress' }
                 }
             },
             {
                 $project: {
                     deviceName: '$_id',
-                    uniqueClicks: 1,
+                    uniqueClicks: {$size:'$uniqueClicks'},
                     uniqueUsers: { $size: '$uniqueUsers' },
                     _id: 0
                 }
@@ -110,9 +119,14 @@ export class AnalyticsRepo implements IAnalyticsRepo {
     async findShortUrlByTopic(topic: string): Promise<ShortUrlDoc[] | []> {
         return await ShortUrlModel.find({ topic }, { alias: 1, totalClicks: 1 })
     }
-    async totalClicksBasedOnTopic(topic: string): Promise<any[] | null> {
+    async totalClicksBasedOnTopicOrUser(topic?: string, userId?: string): Promise<any[] | null> {
         return await ShortUrlModel.aggregate([
-            { $match: { topic } },
+            {
+                $match: {
+                    ...(topic ? { topic } : {}),
+                    ...(userId ? { userId: new mongoose.Types.ObjectId(userId) } : {}),
+                }
+            },
             {
                 $group: {
                     _id: null,
@@ -124,6 +138,29 @@ export class AnalyticsRepo implements IAnalyticsRepo {
                     _id: 0,
                     totalClicks: 1
                 }
+            }
+        ])
+    }
+
+    async findUrlsCreatedByUser(userId: string): Promise<ShortUrlDoc[] | []> {
+        return await ShortUrlModel.find({ userId })
+    }
+    async clicksByDateOfUserUrls(userId: string): Promise<any[]> {
+        return await AnalyticsModel.aggregate([
+            {
+                $match: { userId: new mongoose.Types.ObjectId(userId) }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%d-%m-%Y", date: '$timestamp' } },
+                    clicks: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            },
+            {
+                $project: { date: '$_id', clicks: 1, _id: 0 }
             }
         ])
     }

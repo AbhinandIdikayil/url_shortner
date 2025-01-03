@@ -3,14 +3,12 @@ import { IAnalytics, IAnalyticsDoc } from "../model/AnalyticsModel";
 import { AnalyticsRepo } from "../repository/analyticsRepo";
 import { UAParser } from 'ua-parser-js'
 import ErrorResponse from "../utils/ErrorResponse";
-import { url } from "inspector";
 
 
 export class AnalyticsService implements IAnalyticsService {
     private repository: AnalyticsRepo
     constructor(repo: AnalyticsRepo) {
         this.repository = repo
-        console.log(this.repository.create)
     }
     async createAnalytics(data: IAnalytics): Promise<IAnalyticsDoc> {
         console.log(data);
@@ -47,26 +45,47 @@ export class AnalyticsService implements IAnalyticsService {
     }
 
 
-
-
-
     async analyticsBasedOnTopic(topic: string): Promise<any> {
         const urlWithClickCount = await this.repository.findShortUrlByTopic(topic);
-        const totalClicks = await this.repository.totalClicksBasedOnTopic(topic);
+        const totalClicks = await this.repository.totalClicksBasedOnTopicOrUser(topic);
         const shortUrl_id: string[] = urlWithClickCount.map(url => url._id as string)
 
         const uniqueUsers = await this.repository.uniqueClicks(shortUrl_id)
         const clicksByDate = await this.repository.clicksByDate(shortUrl_id)
         const urls = await this.addUniqueUsersToUrls(urlWithClickCount)
+
         return {
-            totalClicks:totalClicks?.[0]?.totalClicks,
+            totalClicks: totalClicks?.[0]?.totalClicks,
             uniqueUsers,
             clicksByDate,
             urls
         }
     }
 
-    async addUniqueUsersToUrls(url: any[]): Promise<any[]> {
+    async overAllAnalytics(userId: string): Promise<any> {
+        try {
+            const totalClicks = await this.repository.totalClicksBasedOnTopicOrUser(undefined, userId);
+            const totalUrl = await this.repository.findUrlsCreatedByUser(userId);
+            const totalUrlLength = totalUrl.length
+            const shortUrl_ids = totalUrl.map(url => url._id as string)
+            const uniqueUsers = await this.repository.uniqueClicks(shortUrl_ids);
+            const clicksByDate = await this.repository.clicksByDateOfUserUrls(userId);
+            const osType = await this.repository.osType();
+            const deviceType = await this.repository.deviceType()
+            return {
+                totalUrls: totalUrlLength,
+                totalClicks: totalClicks?.[0]?.totalClicks,
+                uniqueUsers,
+                clicksByDate,
+                osType, 
+                deviceType
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    private async addUniqueUsersToUrls(url: any[]): Promise<any[]> {
         const urls = Promise.all(
             url?.map(async (obj) => {
                 const uniqueUsers = await this.repository.uniqueClicks(obj._id as string)
@@ -78,4 +97,6 @@ export class AnalyticsService implements IAnalyticsService {
         )
         return urls;
     }
+
+
 }

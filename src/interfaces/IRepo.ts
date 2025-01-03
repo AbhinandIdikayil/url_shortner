@@ -16,9 +16,11 @@ export interface IAnalyticsRepo {
     create(data: IAnalytic): Promise<IAnalyticsDoc>
     uniqueClicks(shortUrl_Id: string | string[]): Promise<number>
     findShortUrl(alias: string): Promise<ShortUrlDoc | null>
-    clicksByDate(shortUrl_Id?: string | string[], last_day?:number): Promise<{date: string, clicks:number}[]>
-    osType(shortUrl_Id?: string): Promise<any[]>
-    deviceType(shortUrl_Id?: string): Promise<any[]>
+    clicksByDate(shortUrl_Id?: string | string[], last_day?: number): Promise<{ date: string, clicks: number }[]>
+    osType(shortUrl_Id?: string, userId?: string): Promise<any[]>
+    deviceType(shortUrl_Id?: string, userId?: string): Promise<any[]>
     findShortUrlByTopic(topic: string): Promise<ShortUrlDoc[] | []>
-    totalClicksBasedOnTopic(topic: string): Promise<any[] | null>
+    totalClicksBasedOnTopicOrUser(topic?: string, userId?: string): Promise<any[] | null>
+    findUrlsCreatedByUser(userId: string): Promise<ShortUrlDoc[] | []>
+    clicksByDateOfUserUrls(userId: string): Promise<any[]>
 }

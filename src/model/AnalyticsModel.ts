@@ -59,6 +59,6 @@ const AnalyticsSchema = new mongoose.Schema<IAnalyticsDoc>({
         type: Date,
         default: Date.now
     }
-}, { timestamps: true })
+}, { timestamps: true });
 
 export const AnalyticsModel = mongoose.model<IAnalyticsDoc>(DB_enum.ANALYTICS, AnalyticsSchema);
