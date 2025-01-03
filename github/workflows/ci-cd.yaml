@@ -1,4 +1,4 @@
-name: Build and publish auth service to Docker Hub
+name: Build and publish shortner image to Docker Hub
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     paths:
       - "src/"
   workflow_dispatch:
-  
+
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -30,7 +30,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .src/
+          context: ./src/
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/url_shortner:latest
