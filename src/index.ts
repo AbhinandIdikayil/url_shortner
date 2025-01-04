@@ -22,8 +22,9 @@ const startServer = () => {
         const responsePayload = {
             message: `Url shortner!`,
             links: {
+                api_doc:`${CONFIG.URL}/api-docs`,
                 logout: `${CONFIG.URL}/logout`,
-                login: `${CONFIG.URL}$/login/google`
+                login: `${CONFIG.URL}/google/signup`
             },
         }
 
