@@ -3,6 +3,7 @@ import { AnalyticsRepo } from '../repository/analyticsRepo'
 import { AnalyticsService } from '../services/analyticsService';
 import { AnalyticsController } from '../controllers/AnalyticsController';
 import { auth } from '../middlewares/auth';
+import { shortUrlRateLimiter } from '../config/rate.limiter';
 
 export const analyticsRouter = Router()
 
@@ -170,7 +171,7 @@ analyticsRouter.route('/overall')
 *                   example: CREATED
 */
 analyticsRouter.route('/:alias')
-    .get(analyticsController.aliasBasedAnalyticsController.bind(analyticsController))
+    .get(shortUrlRateLimiter, analyticsController.aliasBasedAnalyticsController.bind(analyticsController))
 
 
 
@@ -243,7 +244,7 @@ analyticsRouter.route('/:alias')
 *                             example: "http://localhost:3000/api/shorten/tpjKuqb9"
 */
 analyticsRouter.route('/topic/:topic')
-    .get(analyticsController.topicBasedAnalyticsController.bind(analyticsController));
+    .get(shortUrlRateLimiter, analyticsController.topicBasedAnalyticsController.bind(analyticsController));
 
 
 
