@@ -21,6 +21,14 @@ const authAndUrlController = new AuthAndUrlController(authAndUrlService)
     *     tags: [Authorization]
     *     requestBody:
     *       required: false
+    *     parameters:
+    *       - in: header
+    *         name: id_token
+    *         required: true
+    *         description: Google authorization token
+    *         schema:
+    *           type: string
+    *           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     *     responses:
     *       201:
     *         description: Successful operation

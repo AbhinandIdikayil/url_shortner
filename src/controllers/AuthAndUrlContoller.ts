@@ -18,7 +18,7 @@ export class AuthAndUrlController {
         try {
             const authHeader = req.headers.authorization; //! id_token from google auth
             if (!authHeader || !authHeader.startsWith('Bearer ')) {
-                throw ErrorResponse.badRequest('_id_token is required');
+                throw ErrorResponse.badRequest('_id_token is required in authorization header');
             }
 
             const id_token = authHeader.split(' ')[1]; // Extract token after "Bearer"
