@@ -1,16 +1,16 @@
 import { IAnalyticsService } from "../interfaces/IService";
 import { IAnalytics, IAnalyticsDoc } from "../model/AnalyticsModel";
-import { AnalyticsRepo } from "../repository/analyticsRepo";
 import { UAParser } from 'ua-parser-js'
 import ErrorResponse from "../utils/ErrorResponse";
 import { getGeolocation } from "../utils/geoLocation";
 import { CONFIG } from "../constants/env";
+import { IAnalyticsRepo } from "../interfaces/IRepo";
 
 
 
 export class AnalyticsService implements IAnalyticsService {
-    private repository: AnalyticsRepo
-    constructor(repo: AnalyticsRepo) {
+    private repository: IAnalyticsRepo
+    constructor(repo: IAnalyticsRepo) {
         this.repository = repo
     }
     async createAnalytics(data: IAnalytics): Promise<IAnalyticsDoc> {

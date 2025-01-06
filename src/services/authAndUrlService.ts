@@ -3,18 +3,18 @@ import { AuthAndUrlIService } from "../interfaces/IService"
 import { OAuth2Client } from 'google-auth-library'
 import ErrorResponse from "../utils/ErrorResponse"
 import { generateToken } from "../utils/genereteToken"
-import { AuthAndUrlRepo } from "../repository/authAndUrlRepo"
 import { CreateUrl } from "../interfaces/User"
 import { generateAlias } from "../utils/generateAlias"
 import { ShortUrlTopicENUM } from "../constants/enum/topic"
 import { ShortUrlDoc } from "../model/ShortUrlModel"
 import { redisClient } from "../config/redis"
+import { AuthAndUrlIRepo } from "../interfaces/IRepo"
 
 const client = new OAuth2Client(CONFIG.CLIENT_ID, CONFIG.CLIENT_SECRET, CONFIG.REDIRECT_URI)
 
 export class AuthAndUrlService implements AuthAndUrlIService {
-    private repository: AuthAndUrlRepo
-    constructor(repository: AuthAndUrlRepo) {
+    private repository: AuthAndUrlIRepo
+    constructor(repository: AuthAndUrlIRepo) {
         this.repository = repository
     }
     async signin(id_token: string): Promise<{ email: string, token: string, name: string }> {

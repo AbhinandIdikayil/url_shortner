@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express"
-import { AnalyticsService } from "../services/analyticsService"
 import ErrorResponse from "../utils/ErrorResponse"
 import { success } from "../middlewares/success"
 import { AuthenticatedRequest } from "../interfaces/Request"
+import { IAnalyticsService } from "../interfaces/IService"
 
 
 export class AnalyticsController {
-    private service: AnalyticsService
-    constructor(service: AnalyticsService) {
+    private service: IAnalyticsService
+    constructor(service: IAnalyticsService) {
         this.service = service
     }
     async aliasBasedAnalyticsController(req: Request, res: Response, next: NextFunction) {

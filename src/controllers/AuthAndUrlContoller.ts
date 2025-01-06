@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthAndUrlService } from "../services/authAndUrlService";
 import ErrorResponse from "../utils/ErrorResponse";
 import { success } from "../middlewares/success";
 import { status_code } from "../constants/enum/status_code";
 import { AuthenticatedRequest } from "../interfaces/Request";
 import { analyticsEvent } from "../events";
 import { Event_ENUM } from "../constants/event";
+import { AuthAndUrlIService } from "../interfaces/IService";
 
 
 export class AuthAndUrlController {
-    private service: AuthAndUrlService
-    constructor(service: AuthAndUrlService) {
+    private service: AuthAndUrlIService
+    constructor(service: AuthAndUrlIService) {
         this.service = service
     }
 
